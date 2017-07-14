@@ -3,49 +3,57 @@ const browserifyFs = require('ws-browserify-fs')
 const remote = 'https://fs.secapps.com'
 const hostname = 'secapps.com'
 
-let promise
+if (document.location.origin === remote) {
+    document.domain = hostname
 
-const wrap = (name) => () => {
-    const args = arguments
+    module.exports = browserifyFs
+} else {
+    var promise
 
-    if (!promise) {
-        promise = new Promise((resolve, reject) => {
-            const iframe = document.createElement('iframe')
+    const wrap = function (name) {
+        return function () {
+            const args = arguments
 
-            iframe.src = remote
-            iframe.style = 'opacity: 0; width: 1px; height: 1px'
+            if (!promise) {
+                promise = new Promise(function (resolve, reject) {
+                    const iframe = document.createElement('iframe')
 
-            document.body.appendChild(iframe)
+                    iframe.src = remote
+                    iframe.style = 'opacity: 0; width: 1px; height: 1px'
 
-            iframe.onload = () => {
-                const documentDomain = document.domain
+                    document.body.appendChild(iframe)
 
-                document.domain = hostname
+                    iframe.onload = function () {
+                        const documentDomain = document.domain
 
-                resolve(iframe.contentWindow.fs)
+                        document.domain = hostname
 
-                document.document = documentDomain
+                        resolve(iframe.contentWindow.fs)
+
+                        document.document = documentDomain
+                    }
+
+                    iframe.onerror = function (error) {
+                        reject(error)
+                    }
+                })
             }
 
-            iframe.onerror = (error) => {
-                reject(error)
-            }
-        })
+            promise
+            .then(function (fs) {
+                fs[name].apply(fs, args)
+            })
+            .catch(function (error) {
+                const callback = args[args.length - 1]
+
+                if (callback && typeof(callback) === 'function') {
+                    callback(error)
+                }
+            })
+        }
     }
 
-    promise
-    .then((fs) => {
-        fs[name].apply(fs, args)
-    })
-    .catch((error) => {
-        const callback = args[args.length - 1]
-
-        if (callback && typeof(callback) === 'function') {
-            callback(error)
-        }
+    Object.keys(browserifyFs).forEach(function (name) {
+        module.exports[name] = wrap(name)
     })
 }
-
-Object.keys(browserifyFs).forEach((name) => {
-    module.exports[name] = wrap(name)
-})
