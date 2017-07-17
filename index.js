@@ -3,6 +3,9 @@ const browserifyFs = require('ws-browserify-fs')
 const remote = 'https://fs.secapps.com'
 const hostname = 'secapps.com'
 
+if (typeof(document) === 'undefined') {
+    module.exports = browserifyFs
+} else
 if (document.location.origin === remote) {
     document.domain = hostname
 
