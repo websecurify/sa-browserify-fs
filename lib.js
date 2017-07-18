@@ -1,8 +1,7 @@
 const through = require('through')
 const browserifyFs = require('ws-browserify-fs')
 
-const remote = 'https://fs.secapps.com'
-const hostname = 'secapps.com'
+const config = require('./config')
 
 var promise
 
@@ -11,7 +10,7 @@ const getPromise = function () {
         promise = new Promise(function (resolve, reject) {
             const iframe = document.createElement('iframe')
 
-            iframe.src = remote
+            iframe.src = config.remote
             iframe.style = 'opacity: 0; width: 1px; height: 1px'
 
             document.body.appendChild(iframe)
@@ -19,7 +18,7 @@ const getPromise = function () {
             iframe.onload = function () {
                 const documentDomain = document.domain
 
-                document.domain = hostname
+                document.domain = config.hostname
 
                 resolve(iframe.contentWindow.fs)
 
