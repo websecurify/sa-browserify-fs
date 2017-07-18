@@ -53,12 +53,12 @@ const wrapCreateReadStream = function () {
         const args = arguments
 
         getPromise()
-        .then((fs) => {
+        .then(function (fs) {
             fs.createReadStream.apply(fs, args).pipe(readable)
 
             readable.resume()
         })
-        .catch((error) => {
+        .catch(function (error) {
             readable.emit('error', error)
         })
 
@@ -84,12 +84,12 @@ const wrapCreateWriteStream = function () {
         const args = arguments
 
         getPromise()
-        .then((fs) => {
+        .then(function (fs) {
             writable.pipe(fs.createWriteStream.apply(fs, args))
 
             writable.resume()
         })
-        .catch((error) => {
+        .catch(function (error) {
             writable.emit('error', error)
         })
 
