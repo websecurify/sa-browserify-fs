@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/websecurify/sa-browserify-fs#readme",
   "dependencies": {
+    "through": "^2.3.8",
     "ws-browserify-fs": "^1.0.1"
   }
 }
