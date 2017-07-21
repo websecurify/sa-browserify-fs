@@ -11,7 +11,7 @@ const getPromise = function () {
             const iframe = document.createElement('iframe')
 
             iframe.src = config.remote
-            iframe.style = 'opacity: 0; width: 1px; height: 1px'
+            iframe.style = 'display: none'
 
             document.body.appendChild(iframe)
 
