@@ -1,6 +1,6 @@
 {
   "name": "sa-browserify-fs",
-  "version": "0.0.11",
+  "version": "1.0.0",
   "description": "SA-compatible browserify-fs",
   "main": "index.js",
   "scripts": {
